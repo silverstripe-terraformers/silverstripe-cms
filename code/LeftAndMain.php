@@ -960,41 +960,32 @@ JS;
 	/**
 	 * Return the version number of this application.
 	 * Uses the subversion path information in <mymodule>/silverstripe_version
-	 * (automacially replaced $URL$ placeholder).
+	 * (automacially replaced by build scripts).
 	 * 
 	 * @return string
 	 */
 	public function CMSVersion() {
-		$sapphireVersionFile = file_get_contents('../sapphire/silverstripe_version');
-		$jspartyVersionFile = file_get_contents('../jsparty/silverstripe_version');
-		$cmsVersionFile = file_get_contents('../cms/silverstripe_version');
+		$cmsVersion = file_get_contents(BASE_PATH . '/cms/silverstripe_version');
+		$jspartyVersion = file_get_contents(BASE_PATH . '/jsparty/silverstripe_version');
+		$sapphireVersion = file_get_contents(BASE_PATH . '/sapphire/silverstripe_version');
+		if(!$cmsVersion || !$sapphireVersion || !$jspartyVersion) return;
 
-		if(strstr($sapphireVersionFile, "/sapphire/trunk")) {
-			$sapphireVersion = "trunk";
-		} else {
-			preg_match("/sapphire\/(?:(?:branches)|(?:tags))(?:\/rc)?\/([A-Za-z0-9._-]+)\/silverstripe_version/", $sapphireVersionFile, $matches);
-			$sapphireVersion = ($matches) ? $matches[1] : null;
-		}
-
-		if(strstr($jspartyVersionFile, "/jsparty/trunk")) {
-			$jspartyVersion = "trunk";
-		} else {
-			preg_match("/jsparty\/(?:(?:branches)|(?:tags))(?:\/rc)?\/([A-Za-z0-9._-]+)\/silverstripe_version/", $jspartyVersionFile, $matches);
-			$jspartyVersion = ($matches) ? $matches[1] : null;
-		}
-
-		if(strstr($cmsVersionFile, "/cms/trunk")) {
-			$cmsVersion = "trunk";
-		} else {
-			preg_match("/cms\/(?:(?:branches)|(?:tags))(?:\/rc)?\/([A-Za-z0-9._-]+)\/silverstripe_version/", $cmsVersionFile, $matches);
-			$cmsVersion = ($matches) ? $matches[1] : null;
-		}
-
-		if($sapphireVersion == $jspartyVersion && $jspartyVersion == $cmsVersion) {
+		if($cmsVersion == $sapphireVersion) {
 			return $sapphireVersion;
-		}	else {
-			return "cms: $cmsVersion, sapphire: $sapphireVersion, jsparty: $jspartyVersion";
+		} else {
+			return sprintf("cms: %s, sapphire: %s, jsparty: %s", $cmsVersion, $sapphireVersion, $jspartyVersion);	
 		}
+		
+	}
+	
+	/**
+	 * @return array
+	 */
+	function SwitchView() { 
+		if($page = $this->currentPage()) { 
+			$nav = SilverStripeNavigator::get_for_record($page); 
+			return $nav['items']; 
+		} 
 	}
 
 	/**
