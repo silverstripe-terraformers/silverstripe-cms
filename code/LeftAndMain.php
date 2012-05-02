@@ -497,8 +497,9 @@ class LeftAndMain extends Controller {
 			// This lets us override the tree title with an extension
 			if($this->hasMethod('getCMSTreeTitle')) $treeTitle = $this->getCMSTreeTitle();
 			else $treeTitle =  _t('LeftAndMain.SITECONTENTLEFT',"Site Content",PR_HIGH,'Root node on left');
+			$treeTitle_XML = Convert::raw2xml($treeTitle);
 			
-			$siteTree = "<ul id=\"sitetree\" class=\"tree unformatted\"><li id=\"record-0\" class=\"Root nodelete\"><a href=\"$rootLink\"><strong>$treeTitle</strong></a>"
+			$siteTree = "<ul id=\"sitetree\" class=\"tree unformatted\"><li id=\"record-0\" class=\"Root nodelete\"><a href=\"$rootLink\"><strong>$treeTitle_XML</strong></a>"
 				. $siteTree . "</li></ul>";
 		}
 
