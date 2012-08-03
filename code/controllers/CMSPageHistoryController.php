@@ -97,10 +97,17 @@ class CMSPageHistoryController extends CMSMain {
 		// Respect permission failures from parent implementation
 		if(!($form instanceof Form)) return $form;
 
+		$vd = new ViewableData();
+		$previewHtml = $vd->customise(array(
+			'Link' => $this->fetchArchiveUrl($id, $versionID),
+			'Preview' => _t('LeftAndMain.PreviewButton', 'Preview')
+		))->renderWith('CMSPageHistoryController_archive');
+
 		$form->setActions(new FieldList(
-			$revert = FormAction::create('doRollback', _t('CMSPageHistoryController.REVERTTOTHISVERSION', 'Revert to this version'))->setUseButtonTag(true)
-		));
-		
+			$revert = FormAction::create('doRollback', _t('CMSPageHistoryController.REVERTTOTHISVERSION', 'Revert to this version'))->setUseButtonTag(true),
+			$preview = new LiteralField('Preview', $previewHtml))
+		);
+
 		$fields = $form->Fields();
 		$fields->removeByName("Status");
 		$fields->push(new HiddenField("ID"));

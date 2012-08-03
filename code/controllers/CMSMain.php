@@ -1053,6 +1053,27 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 	}
 
 	/**
+	 * Return a archive url for a page and version
+	 *
+	 * @int id the id of the page
+	 * @int version the version of the page
+	 *
+	 * @return html
+	 */
+	function fetchArchiveUrl($id, $version = null) {
+		
+		if ($version) {
+			$record = Versioned::get_version($this->stat('tree_class'), $id, $version);
+		} else {
+			$record = DataObject::get_by_id($this->stat('tree_class'), $id);
+		}
+
+		$archive = new SilverStripeNavigatorItem_ArchiveLink($record);
+
+		return $archive->getLink();
+	}
+
+	/**
 	 * Batch Actions Handler
 	 */
 	function batchactions() {
