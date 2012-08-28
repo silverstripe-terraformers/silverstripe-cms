@@ -114,6 +114,7 @@ class CMSPageAddController extends CMSPageEditController {
 		if(!$parentObj || !$parentObj->ID) $parentID = 0;
 
 		if($parentObj) {
+			if (!in_array($className,$parentObj->allowedChildren())) return Security::permissionFailure($this);
 			if(!$parentObj->canAddChildren()) return Security::permissionFailure($this);
 			if(!singleton($className)->canCreate()) return Security::permissionFailure($this);
 		} else {
