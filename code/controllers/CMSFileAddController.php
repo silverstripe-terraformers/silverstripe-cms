@@ -53,6 +53,7 @@ class CMSFileAddController extends LeftAndMain {
 	 */
 	public function getEditForm($id = null, $fields = null) {
 		Requirements::javascript(FRAMEWORK_DIR . '/javascript/AssetUploadField.js');
+		Requirements::javascript(FRAMEWORK_DIR . '/javascript/Tooltip.js');
 		Requirements::css(FRAMEWORK_DIR . '/css/AssetUploadField.css');
 
 		$folder = $this->currentPage();
@@ -80,14 +81,6 @@ class CMSFileAddController extends LeftAndMain {
 			'getEditForm',
 			new FieldList(
 				$uploadField,
-				new LiteralField(
-					'AllowedExtensions',
-					sprintf(
-						'<p>%s: %s</p>',
-						_t('AssetAdmin.ALLOWEDEXTS', 'Allowed extensions'),
-						implode('<em>, </em>', $exts)
-					)
-				),
 				new HiddenField('ID')
 			),
 			new FieldList()
@@ -102,6 +95,16 @@ class CMSFileAddController extends LeftAndMain {
 					'<a href="%s" class="backlink ss-ui-button cms-panel-link" data-icon="back">%s</a>',
 					Controller::join_links(singleton('AssetAdmin')->Link('show'), $folder ? $folder->ID : 0),
 					_t('AssetAdmin.BackToFolder', 'Back to folder')
+				)
+			)
+		);
+		$form->Fields()->push(
+			$extensions = new LabelField(
+				'AllowedExtension',
+				sprintf(
+					'<a id="test" class="ss-tooltip cms-help-toggle" title="%s">%s</a>',
+					implode('<em>, </em>', $exts),
+					_t('AssetAdmin.ALLOWEDEXTS', 'Allowed extensions')
 				)
 			)
 		);
