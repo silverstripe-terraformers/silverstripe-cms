@@ -11,7 +11,11 @@
 		$('.cms-edit-form :input[name=ClassName]').entwine({
 			// Function: onchange
 			onchange: function() {
-				alert(ss.i18n._t('CMSMAIN.ALERTCLASSNAME'));
+				if (confirm(ss.i18n._t('CMSMAIN.CONFIRMSAVECLASSNAME'))) {
+					$('[name=action_save]').click();
+				} else {
+					return false;
+				}
 			}
 		});
 

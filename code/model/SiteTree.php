@@ -1929,8 +1929,8 @@ class SiteTree extends DataObject implements PermissionProvider,i18nEntityProvid
 						'VirtualPageWarning',
 						'<div class="message notice">' .
 							_t('SITETREE.VIRTUALPAGEWARNING',
-								'<p>Page cannot be published until you choose ' .
-								'a page to link to!</p>'
+								'<p>This virtual page cannot be published until you set ' .
+								'a page to link to!</p>') .
 						'</div>'
 					),
 					$copyContentFromField = new TreeDropdownField(
@@ -1964,6 +1964,8 @@ class SiteTree extends DataObject implements PermissionProvider,i18nEntityProvid
 				)
 			)
 		);
+
+		// CopyContentFromID and VirtualPageWarning are specific to Virtual pages
 		if ($this->ClassName != 'VirtualPage') {
 			$fields->removeByName('CopyContentFromID');
 			$fields->removeByName('VirtualPageWarning');

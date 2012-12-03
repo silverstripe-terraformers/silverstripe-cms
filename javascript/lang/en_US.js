@@ -20,6 +20,7 @@ if(typeof(ss) == 'undefined' || typeof(ss.i18n) == 'undefined') {
 		'CMSMAIN.SAVING' : 'saving...',
 		'CMSMAIN.SELECTMOREPAGES' : "You have %s pages selected.\n\nDo you really want to perform this action?",
 		'CMSMAIN.ALERTCLASSNAME': 'The page type will be updated after the page is saved',
+		'CMSMAIN.CONFIRMSAVECLASSNAME': 'Do you want to update the page type and save the page to draft',
 		'CMSMAIN.URLSEGMENTVALIDATION': 'URLs can only be made up of letters, digits and hyphens.',
 		'AssetAdmin.BATCHACTIONSDELETECONFIRM': "Do you really want to delete %s folders?",
 		'AssetTableField.REALLYDELETE': 'Do you really want to delete the marked files?',
