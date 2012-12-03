@@ -19,11 +19,12 @@
 				}
 
 				// the main form and ClassName will have the class changed applied
-				if ($('.changed').length < 3) {
-					$('[name=action_save]').click();
+				var thisForm = this.closest('form');
+				if (thisForm.find('.changed').length == 1) {
+					thisForm.find('[name=action_save]').click();
 					return;
 				}
-				var save = ss.i18n._t('URLSEGMENT.Save & Continue', 'Save & Continue');
+				var save = ss.i18n._t('URLSEGMENT.SAVECONTINUE', 'Save & Continue');
 				var cancel = ss.i18n._t('URLSEGMENT.Cancel', 'Cancel');
 				var title = ss.i18n._t('URLSEGMENT.CONFIRMSAVECLASSNAME',
 					'Do you want to update the page type?')
@@ -43,7 +44,7 @@
 							class: 'ss-ui-action-constructive',
 							'click': function() {
 								$( this ).dialog('close');
-								$('[name=action_save]').click();
+								thisForm.find('[name=action_save]').click();
 							},
 						},
 						{
