@@ -23,26 +23,32 @@
 					$('[name=action_save]').click();
 					return;
 				}
-				var save = ss.i18n._t('URLSEGMENT.Savce & Continue', 'Save & Continue');
+				var save = ss.i18n._t('URLSEGMENT.Save & Continue', 'Save & Continue');
 				var cancel = ss.i18n._t('URLSEGMENT.Cancel', 'Cancel');
 				var title = ss.i18n._t('URLSEGMENT.CONFIRMSAVECLASSNAME',
 					'Do you want to update the page type?')
 				var dialog = $('<div id="savePageType" title="' + title + '"/>');
 				$('body').append(dialog);
 				$('#savePageType').dialog({
+					open: function(event, ui) {
+						$('.ui-dialog-titlebar-close').hide();
+					},
 					resizable: false,
 					height:140,
 					modal: true,
+					closeOnEscape: false,
 					buttons: [
 						{
 							text: save,
-							click: function() {
+							class: 'ss-ui-action-constructive',
+							'click': function() {
 								$( this ).dialog('close');
 								$('[name=action_save]').click();
 							},
 						},
 						{
 							text: cancel,
+							class: 'ss-ui-action-destructive',
 							click : function() {
 								$( this ).dialog('close');
 								return false;
