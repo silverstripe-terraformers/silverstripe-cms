@@ -483,7 +483,7 @@ class SiteTree extends DataObject implements PermissionProvider,i18nEntityProvid
 	 * @return String
 	 */
 	public function CMSEditLink() {
-		return Controller::join_links(singleton('CMSPageEditController')->Link('show'), $this->ID);
+		return singleton('CMSPageEditController')->Link('show', $this->ID);
 	}
 	
 		

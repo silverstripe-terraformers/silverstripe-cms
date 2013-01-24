@@ -2,14 +2,13 @@
 class CMSPageAddController extends CMSPageEditController {
 
 	static $url_segment = 'pages/add';
-	static $url_rule = '/$Action/$ID/$OtherID';
 	static $url_priority = 42;
 	static $menu_title = 'Add page';
 	static $required_permission_codes = 'CMS_ACCESS_CMSMain';
 
-	static $allowed_actions = array(
+	static $collection_actions = array(
 		'AddForm',
-		'doAdd',
+		'doAdd'
 	);
 
 	/**
@@ -158,7 +157,7 @@ class CMSPageAddController extends CMSPageEditController {
 		);
 		Session::set("FormInfo.Form_EditForm.formError.type", 'good');
 		
-		return $this->redirect(Controller::join_links(singleton('CMSPageEditController')->Link('show'), $record->ID));
+		return $this->redirect(singleton('CMSPageEditController')->Link('show', $record->ID));
 	}
 
 }

@@ -13,8 +13,6 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 	
 	static $url_segment = 'pages';
 	
-	static $url_rule = '/$Action/$ID/$OtherID';
-	
 	// Maintain a lower priority than other administration sections
 	// so that Director does not think they are actions of CMSMain
 	static $url_priority = 39;
@@ -26,26 +24,21 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 	static $tree_class = "SiteTree";
 	
 	static $subitem_class = "Member";
-	
-	static $allowed_actions = array(
-		'buildbrokenlinks',
-		'deleteitems',
-		'DeleteItemsForm',
-		'dialog',
+
+	static $item_actions = array(
 		'duplicate',
 		'duplicatewithchildren',
-		'publishall',
-		'publishitems',
-		'PublishItemsForm',
-		'submit',
-		'EditForm',
+		'buildbrokenlinks'
+	);
+
+	static $collection_actions = array(
 		'SearchForm',
-		'SiteTreeAsUL',
-		'getshowdeletedsubtree',
-		'batchactions',
+		'publishall',
+		'buildbrokenlinks',
 		'treeview',
 		'listview',
 		'ListViewForm',
+		'SiteTreeAsUL'
 	);
 	
 	public function init() {
@@ -134,11 +127,12 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 	 * 
 	 * @return string
 	 */
-	public function Link($action = null) {
+	public function Link($action = null, $itemid = null) {
 		$link = Controller::join_links(
 			$this->stat('url_base', true),
 			$this->stat('url_segment', true), // in case we want to change the segment
 			'/', // trailing slash needed if $action is null!
+			$itemid === null ? $itemid : "$itemid",
 			"$action"
 		);
 		$this->extend('updateLink', $link);
@@ -167,24 +161,18 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 
 	public function LinkPageEdit($id = null) {
 		if(!$id) $id = $this->currentPageID();
-		return $this->LinkWithSearch(
-			Controller::join_links(singleton('CMSPageEditController')->Link('show'), $id)
-		);
+		return $this->LinkWithSearch(singleton('CMSPageEditController')->Link('show', $id));
 	}
 
 	public function LinkPageSettings() {
 		if($id = $this->currentPageID()) {
-			return $this->LinkWithSearch(
-				Controller::join_links(singleton('CMSPageSettingsController')->Link('show'), $id)
-			);
+			return $this->LinkWithSearch(singleton('CMSPageSettingsController')->Link('show', $id));
 		}
 	}
 
 	public function LinkPageHistory() {
 		if($id = $this->currentPageID()) {
-			return $this->LinkWithSearch(
-				Controller::join_links(singleton('CMSPageHistoryController')->Link('show'), $id)
-			);
+			return $this->LinkWithSearch(singleton('CMSPageHistoryController')->Link('show', $id));
 		}
 	}
 
@@ -663,6 +651,7 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 			}
 			
 			$form = new Form($this, "EditForm", $fields, $actions, $validator);
+			$form->setFormAction($this->Link('EditForm', $id));
 			$form->loadDataFrom($record);
 			$form->disableDefaultAction();
 			$form->addExtraClass('cms-edit-form');
@@ -782,7 +771,7 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 				}
 			},
 			'getTreeTitle' => function($value, &$item) use($controller) {
-				return '<a class="action-detail" href="' . singleton('CMSPageEditController')->Link('show') . '/' . $item->ID . '">' . $item->TreeTitle . '</a>';
+				return '<a class="action-detail" href="' . singleton('CMSPageEditController')->Link('show', $item->ID) . '">' . $item->TreeTitle . '</a>';
 			}
 		));
 		
@@ -1107,7 +1096,7 @@ class CMSMain extends LeftAndMain implements CurrentPageIdentifier, PermissionPr
 		// Can be used in different contexts: In normal page edit view, in which case the redirect won't have any effect.
 		// Or in history view, in which case a revert causes the CMS to re-load the edit view.
 		// The X-Pjax header forces a "full" content refresh on redirect.
-		$url = Controller::join_links(singleton('CMSPageEditController')->Link('show'), $record->ID);
+		$url = singleton('CMSPageEditController')->Link('show', $record->ID);
 		$this->response->addHeader('X-ControllerURL', $url);
 		$this->request->addHeader('X-Pjax', 'Content');  
 		$this->response->addHeader('X-Pjax', 'Content');  

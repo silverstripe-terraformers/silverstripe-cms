@@ -7,8 +7,28 @@
 class CMSPageHistoryController extends CMSMain {
 
 	static $url_segment = 'pages/history';
-	static $url_rule = '/$Action/$ID/$VersionID/$OtherVersionID';
 	static $url_priority = 42;
+
+	static $item_id_format = '$ItemID!/$VersionID!';
+
+	static $item_actions = array(
+		'VersionsForm',
+		'compare//$OtherVersionID'
+	);
+
+	public function Link($action = null, $itemid = null, $version = null) {
+		$link = Controller::join_links(
+			$this->stat('url_base', true),
+			$this->stat('url_segment', true), // in case we want to change the segment
+			'/', // trailing slash needed if $action is null!
+			$itemid === null ? $itemid : "$itemid",
+			$itemid !== null ? ($version === null ? 0 : $version) : null,
+			"$action"
+		);
+		$this->extend('updateLink', $link);
+		return $link;
+	}
+
 	static $menu_title = 'History';
 	static $required_permission_codes = 'CMS_ACCESS_CMSMain';
 	static $session_namespace = 'CMSMain';
@@ -254,8 +274,8 @@ class CMSPageHistoryController extends CMSMain {
 		
 		$form
 			->addExtraClass('cms-versions-form') // placeholder, necessary for $.metadata() to work
-			->setAttribute('data-link-tmpl-compare', Controller::join_links($this->Link('compare'), '%s', '%s', '%s'))
-			->setAttribute('data-link-tmpl-show', Controller::join_links($this->Link('show'), '%s', '%s'));
+			->setAttribute('data-link-tmpl-compare', Controller::join_links($this->Link('compare', $this->ID, '%s'), '%s'))
+			->setAttribute('data-link-tmpl-show', $this->Link('show', $this->ID, '%s'));
 		
 		return $form;
 	}

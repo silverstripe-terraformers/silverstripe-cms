@@ -9,11 +9,7 @@
 class AssetAdmin extends LeftAndMain implements PermissionProvider{
 
 	static $url_segment = 'assets';
-	
-	static $url_rule = '/$Action/$ID';
-	
 	static $menu_title = 'Files';
-
 	public static $tree_class = 'Folder';
 	
 	/**
@@ -21,33 +17,23 @@ class AssetAdmin extends LeftAndMain implements PermissionProvider{
 	 * @var int
 	 */
 	public static $allowed_max_file_size;
-	
-	public static $allowed_actions = array(
-		'addfolder',
+
+	static $item_actions = array(
+		'addfolder'
+	);
+
+	static $collection_actions = array(
 		'delete',
-		'DeleteItemsForm',
-		'getsubtree',
-		'movemarked',
-		'removefile',
-		'savefile',
-		'deleteUnusedThumbnails' => 'ADMIN',
 		'doSync',
-		'filter',
+		'AddForm'
 	);
 	
 	/**
 	 * Return fake-ID "root" if no ID is found (needed to upload files into the root-folder)
 	 */
 	public function currentPageID() {
-		if(is_numeric($this->request->requestVar('ID')))	{
-			return $this->request->requestVar('ID');
-		} elseif (is_numeric($this->urlParams['ID'])) {
-			return $this->urlParams['ID'];
-		} elseif(Session::get("{$this->class}.currentPage")) {
-			return Session::get("{$this->class}.currentPage");
-		} else {
-			return 0;
-		}
+		$pageID = parent::currentPageID();
+		return $pageID ? $pageID : 0;
 	}
 
 	/**
@@ -153,7 +139,7 @@ JS
 			new GridFieldEditButton(),
 			new GridFieldDeleteAction(),
 			new GridFieldDetailForm(),
-			GridFieldLevelup::create($folder->ID)->setLinkSpec('admin/assets/show/%d')
+			GridFieldLevelup::create($folder->ID)->setLinkSpec('admin/assets/%d/show')
 		);
 
 		$gridField = new GridField('File', $title, $this->getList(), $gridFieldConfig);
@@ -169,8 +155,8 @@ JS
 			'Created' => 'Date->Nice'
 		));
 		$gridField->setAttribute(
-			'data-url-folder-template', 
-			Controller::join_links($this->Link('show'), '%s')
+			'data-url-folder-template',
+			$this->Link('show', '%s')
 		);
 
 		if($folder->canCreate()) {
@@ -325,7 +311,7 @@ JS
 
 		$this->response->addHeader('X-Status', rawurlencode(_t('LeftAndMain.DELETED', 'Deleted.')));
 		$this->response->addHeader('X-Pjax', 'Content');
-		return $this->redirect(Controller::join_links($this->Link('show'), $parentID ? $parentID : 0));
+		return $this->redirect($this->Link('show', $parentID ? $parentID : 0));
 	}
 
 	public function getSearchContext() {
@@ -382,7 +368,7 @@ JS
 		
 		$form = new Form($this, 'filter', $fields, $actions);
 		$form->setFormMethod('GET');
-		$form->setFormAction(Controller::join_links($this->Link('show'), $folder->ID));
+		$form->setFormAction($this->Link('show', $folder->ID));
 		$form->addExtraClass('cms-search-form');
 		$form->loadDataFrom($this->request->getVars());
 		$form->disableSecurityToken();
@@ -472,7 +458,7 @@ JS
 		chmod($record->FullPath, Filesystem::$file_create_mask);
 
 		if($parentRecord) {
-			return $this->redirect(Controller::join_links($this->Link('show'), $parentRecord->ID));
+			return $this->redirect($this->Link('show', $parentRecord->ID));
 		} else {
 			return $this->redirect($this->Link());
 		}
@@ -624,7 +610,7 @@ JS
 
 		// The root element should explicitly point to the root node.
 		// Uses session state for current record otherwise.
-		$items[0]->Link = Controller::join_links(singleton('AssetAdmin')->Link('show'), 0);
+		$items[0]->Link = singleton('AssetAdmin')->Link('show', 0);
 
 		// If a search is in progress, don't show the path
 		if($this->request->requestVar('q')) {

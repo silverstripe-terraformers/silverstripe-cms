@@ -202,8 +202,8 @@ class CMSMainTest extends FunctionalTest {
 		$pageID = $page->ID;
 		$page->doPublish();
 		$page->delete();
-		
-		$response = $this->get('admin/pages/edit/show/' . $pageID);
+
+		$response = $this->get(singleton('CMSPageEditController')->Link('show', $pageID));
 	
 		$livePage = Versioned::get_one_by_stage("SiteTree", "Live", "\"SiteTree\".\"ID\" = $pageID");
 		$this->assertInstanceOf('SiteTree', $livePage);
@@ -331,7 +331,7 @@ class CMSMainTest extends FunctionalTest {
 		$adminuser = $this->objFromFixture('Member', 'admin');
 		$this->session()->inst_set('loggedInAs', $adminuser->ID);
 
-		$response = $this->get('admin/pages/edit/show/' . $page31->ID);
+		$response = $this->get(singleton('CMSPageEditController')->Link('show', $page31->ID));
 		$parser = new CSSContentParser($response->getBody());
 		$crumbs = $parser->getBySelector('.breadcrumbs-wrapper .crumb');
 

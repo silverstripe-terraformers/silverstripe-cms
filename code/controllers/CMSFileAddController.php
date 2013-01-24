@@ -36,15 +36,8 @@ class CMSFileAddController extends LeftAndMain {
 	 * Return fake-ID "root" if no ID is found (needed to upload files into the root-folder)
 	 */
 	public function currentPageID() {
-		if(is_numeric($this->request->requestVar('ID')))	{
-			return $this->request->requestVar('ID');
-		} elseif (is_numeric($this->urlParams['ID'])) {
-			return $this->urlParams['ID'];
-		} elseif(Session::get("{$this->class}.currentPage")) {
-			return Session::get("{$this->class}.currentPage");
-		} else {
-			return 0;
-		}
+		$pageID = parent::currentPageID();
+		return $pageID ? $pageID : 0;
 	}
 
 	/**
@@ -78,13 +71,14 @@ class CMSFileAddController extends LeftAndMain {
 
 		$form = new Form(
 			$this,
-			'getEditForm',
+			'EditForm',
 			new FieldList(
 				$uploadField,				
 				new HiddenField('ID')
 			),
 			new FieldList()
 		);
+		$form->setFormAction($this->Link('EditForm', $folder->ID));
 		$form->addExtraClass('center cms-edit-form ' . $this->BaseCSSClasses());
 		// Don't use AssetAdmin_EditForm, as it assumes a different panel structure
 		$form->setTemplate($this->getTemplatesWithSuffix('_EditForm'));
@@ -93,7 +87,7 @@ class CMSFileAddController extends LeftAndMain {
 				'BackLink',
 				sprintf(
 					'<a href="%s" class="backlink ss-ui-button cms-panel-link" data-icon="back">%s</a>',
-					Controller::join_links(singleton('AssetAdmin')->Link('show'), $folder ? $folder->ID : 0),
+					singleton('AssetAdmin')->Link('show', $folder ? $folder->ID : 0),
 					_t('AssetAdmin.BackToFolder', 'Back to folder')
 				)
 			)

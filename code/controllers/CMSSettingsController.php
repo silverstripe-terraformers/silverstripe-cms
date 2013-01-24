@@ -2,9 +2,10 @@
 class CMSSettingsController extends LeftAndMain {
 
 	static $url_segment = 'settings';
-	static $url_rule = '/$Action/$ID/$OtherID';
+
 	static $menu_priority = -1;
 	static $menu_title = 'Settings';
+
 	static $tree_class = 'SiteConfig';
 	static $required_permission_codes = array('EDIT_SITECONFIG');
 	
@@ -23,7 +24,7 @@ class CMSSettingsController extends LeftAndMain {
 		return $neg;
 	}
 	
-		/**
+	/**
 	 * @return Form
 	 */
 	public function getEditForm($id = null, $fields = null) {
