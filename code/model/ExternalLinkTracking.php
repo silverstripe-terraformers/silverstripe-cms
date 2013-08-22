@@ -37,7 +37,7 @@ class ExternalLinkTracking extends SiteTreeLinkTracking {
 		if($links = $htmlValue->getElementsByTagName('a')) foreach($links as $link) {
 			$href = Director::makeRelative($link->getAttribute('href'));
 
-			// ignore SiteTree ans assets links as they will be caught by SiteTreeLinkTracking
+			// ignore SiteTree and assets links as they will be caught by SiteTreeLinkTracking
 			if(preg_match('/\[sitetree_link,id=([0-9]+)\]/i', $href, $matches)) {
 				return;
 			} else if(substr($href, 0, strlen(ASSETS_DIR) + 1) == ASSETS_DIR.'/') {
